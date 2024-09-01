@@ -1,0 +1,13 @@
+---
+
+all:
+  hosts:
+    192.168.1.167
+      ansible_user: centos 
+      ansible_password: centos
+    vars: ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    192.168.1.168
+      ansible_user: centos
+      ansible_password: centos
+    vars: ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+
