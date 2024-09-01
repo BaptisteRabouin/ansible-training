@@ -1,0 +1,35 @@
+---
+- name: "Apache installation using Docker"
+  hosts: prod
+  become: true
+
+  pre_tasks:
+    - name: Install EPEL repo
+      package:
+        name: epel-release
+        state: present
+      when: ansible_distribution == "CentOS"
+
+    - name: Install pip for Python 3
+      package:
+        name: python3-pip
+        state: present
+
+    - name: Install Docker Python module
+      pip:
+        name: docker
+        executable: pip3
+
+    - name: Install Python 'requests' library
+      pip:
+        name: requests
+        executable: pip3
+
+  tasks:
+    - name: Create Apache container
+      docker_container:
+        name: webapp
+        image: httpd
+        ports:
+          - "80:80"
+        docker_host: unix:///var/run/docker.sock
