@@ -1,0 +1,67 @@
+---
+- name: Install apache with docker on Centos
+  become: true
+  hosts: prod
+
+  pre_tasks:
+    - name: Update cache
+      yum:
+        update_cache: yes
+
+  tasks:
+    - name: install package with yum
+      yum:
+        name: '{{ item }}'
+        state: present
+      loop:
+        - git
+        - wget
+      when: ansible_os_family == 'CentOs'
+
+    - name: install Python and pip3
+      yum:
+        name:
+          - python3
+          - python3-pip
+        state: present
+
+    - name: Install Docker SDK for python
+      pip:
+        name: docker
+        executable: pip3
+
+    - name: Install requests library
+      pip:
+        name: requests
+        executable: pip3
+
+
+    - name: Download script to install docker
+      get_url:
+        url: "https://get.docker.com/"
+        dest: /tmp/get-docker.sh
+        mode: "0755"
+      when: ansible_facts['distribution'] == "CentOS"
+
+    - name: Execute script
+      command: "/tmp/get-docker.sh"
+
+    - name: add user in groups docker
+      user:
+        name: admin
+        groups: docker
+        append: yes
+
+    - name: Start Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Run container apache
+      community.docker.docker_container:
+        name: apache
+        image: httpd
+        state: started
+        ports:
+          - "80:80"
