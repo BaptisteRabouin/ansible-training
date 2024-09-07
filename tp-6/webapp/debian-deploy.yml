@@ -1,0 +1,41 @@
+---
+
+- name: install apache with docker on debian
+  hosts: prod
+  become: true
+  pre_tasks:
+    - name: update
+      apt:
+        update_cache: yes
+
+  tasks:
+    - name: Download script to install docker
+      get_url:
+        url: "https://get.docker.com/"
+        dest: /tmp/get-docker.sh
+        mode: "0755"
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Execute script
+      command: "/tmp/get-docker.sh"
+
+    - name: Add user in groups docker
+      user:
+        name: admin
+        groups: docker
+        append: yes      
+
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+
+    - name: Run container apache
+      docker_container:
+        name: apache
+        image: httpd
+        state: started
+        ports:
+          - "80:80"     
