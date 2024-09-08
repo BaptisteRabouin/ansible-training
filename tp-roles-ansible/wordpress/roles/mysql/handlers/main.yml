@@ -1,2 +1,6 @@
 ---
 # handlers file for roles/mysql
+- name: relancer Apache
+  service:
+    name: apache2
+    state: restarted

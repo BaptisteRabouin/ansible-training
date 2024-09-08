@@ -1,0 +1,12 @@
+---
+# defaults file for roles/wp-cli
+
+wp_cli_phar_url: https://raw.github.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+wp_cli_bin_path: "/usr/bin/wp"
+
+# Dictionnary variables
+wp_plugins:
+  - name: akismet
+    version: 5.3.3
+  - name: broken-link-checker
+    version: 2.3.0
