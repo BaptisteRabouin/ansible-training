@@ -1,0 +1,22 @@
+---
+# tasks file for roles/mysql
+
+- name: install mysql-server
+  apt:
+    update_cache: yes
+    name: default-mysql-server
+    state: present
+
+- name: create mysql db
+  mysql_db:
+    name: '{{ wp_mysql_db }}'
+    state: present
+    login_password: '{{ wp_mysql_password }}'
+
+- name: create mysql user
+  mysql_user:
+    name: '{{wp_mysql_user}}'
+    password: '{{ wp_mysql_password }}'
+    priv: '*.*:ALL'
+    host: 'localhost'
+    login_password: '{{ wp_mysql_password }}'
